@@ -96,7 +96,7 @@ app.get("/gerarRelatorioIndicadores", async (req, res) => {
     fs.unlinkSync(path)
 })
 
-var server = app.listen(4006, "localhost", function () {
+var server = app.listen(4006, function () {
     var host = server.address().address;
     var port = server.address().port;
     console.log('Listeneing at http://%s:%s', host, port);
