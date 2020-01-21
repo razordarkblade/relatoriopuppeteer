@@ -28,14 +28,33 @@ app.get("/gerarRelatorioIndicadores", async (req, res) => {
     var dataInicio = new Date().toLocaleDateString()
     var dataInicioArray = dataInicio.split('-')
     var horaInicio = new Date().toLocaleTimeString()
+    var currentHost = req.query.currentHost
+    
 
     console.log("======================================================================")
     console.log(`Iniciou às: ${dataInicioArray[2]}/${dataInicioArray[1]}/${dataInicioArray[0]} - ${horaInicio}`);
     const browser = await puppeteer.launch({headless: true});
     const page = await browser.newPage();
     
+    console.log("PHPSESSID: ", req.query.phpSessId)
+    console.log("TOKEN RELATORIO: ", req.query.tokenRelatorio)
+
+    const cookies = [{
+      'name': 'PHPSESSID',
+      'value': req.query.phpSessId
+    }];
+
+    await page.goto(`http://gama.controllab.com.br/`)
+
+    await page.evaluate(() => {
+        // localStorage.setItem("indicadores", `{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIxODgzOjYzNDAiLCJhdWQiOjEsImlhdCI6MTU3OTYzMTg1NSwiZXhwIjoxNTc5NjQyNjU1fQ.sWG2Ssrf7wr6nSw2jaMtst1o5mquy5FSCEvX4Oes2QM","idSegmento":1,"tokenExp":1579642655000,"perfilValid":false,"integracao":true,"userId":23226,"idPart":8012}`);
+        localStorage.setItem("indicadores", `${req.query.tokenRelatorio}`); 
+    });
+
+    await page.setCookie(...cookies)
+
     if(currentHost === 'gama')
-        await page.goto(`http://gama.controllab.com.br/cionline/?&RelatorioPage=1&IndicadoresSelecionados=${req.query.indicadores}&periodoInicial=${req.query.periodoInicial}&periodoFinal=${req.query.periodoFinal}&relatorioPuppeteer=1`);
+        await page.goto(`http://gama.controllab.com.br/cionline/?action=${req.query.action}&menuqc=${req.query.menuqc}&RelatorioPage=1&IndicadoresSelecionados=${req.query.indicadores}&periodoInicial=${req.query.periodoInicial}&periodoFinal=${req.query.periodoFinal}&relatorioPuppeteer=1&tokenRelatorio=${req.query.tokenRelatorio}`);
     else
         await page.goto(`http://localhost:3000/?&RelatorioPage=1&IndicadoresSelecionados=${req.query.indicadores}&periodoInicial=${req.query.periodoInicial}&periodoFinal=${req.query.periodoFinal}&relatorioPuppeteer=1`);
     
@@ -44,9 +63,11 @@ app.get("/gerarRelatorioIndicadores", async (req, res) => {
     if(req.query.indicadores.indexOf(',') > -1)
         qtdIndicadores = req.query.indicadores.split(',').length
     
-    console.log("QUERY String: ", req.query.indicadores)
+    console.log("Query String: ", req.query.indicadores)
     console.log("Total de Indicadores: ", qtdIndicadores)
-        
+    console.log("Action: ", req.query.action)
+    console.log("MenuQC: ", req.query.menuqc)
+            
     await page.waitFor(qtdIndicadores * 4000)
     await page.emulateMedia('screen')
 

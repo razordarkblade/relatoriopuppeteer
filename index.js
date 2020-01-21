@@ -34,9 +34,9 @@ app.get("/gerarRelatorioIndicadores", async (req, res) => {
     console.log(`Iniciou às: ${dataInicioArray[2]}/${dataInicioArray[1]}/${dataInicioArray[0]} - ${horaInicio}`);
     const browser = await puppeteer.launch({headless: true});
     const page = await browser.newPage();
-        
+
     if(currentHost === 'gama')
-        await page.goto(`http://gama.controllab.com.br/cionline/?&RelatorioPage=1&IndicadoresSelecionados=${req.query.indicadores}&periodoInicial=${req.query.periodoInicial}&periodoFinal=${req.query.periodoFinal}&relatorioPuppeteer=1`);
+        await page.goto(`http://gama.controllab.com.br/cionline/?action=${req.query.action}&menuqc=${req.query.menuqc}&RelatorioPage=1&IndicadoresSelecionados=${req.query.indicadores}&periodoInicial=${req.query.periodoInicial}&periodoFinal=${req.query.periodoFinal}&relatorioPuppeteer=1`);
     else
         await page.goto(`http://localhost:3000/?&RelatorioPage=1&IndicadoresSelecionados=${req.query.indicadores}&periodoInicial=${req.query.periodoInicial}&periodoFinal=${req.query.periodoFinal}&relatorioPuppeteer=1`);
     
@@ -47,7 +47,9 @@ app.get("/gerarRelatorioIndicadores", async (req, res) => {
     
     console.log("QUERY String: ", req.query.indicadores)
     console.log("Total de Indicadores: ", qtdIndicadores)
-        
+    console.log("Action: ", req.query.action)
+    console.log("MenuQC: ", req.query.menuqc)
+
     await page.waitFor(qtdIndicadores * 4000)
     await page.emulateMedia('screen')
 
