@@ -30,7 +30,6 @@ app.get("/gerarRelatorioIndicadores", async (req, res) => {
     var horaInicio = new Date().toLocaleTimeString()
     var currentHost = req.query.currentHost
     
-
     console.log("======================================================================")
     console.log(`Iniciou às: ${dataInicioArray[2]}/${dataInicioArray[1]}/${dataInicioArray[0]} - ${horaInicio}`);
     const browser = await puppeteer.launch({headless: true});

@@ -35,8 +35,25 @@ app.get("/gerarRelatorioIndicadores", async (req, res) => {
     const browser = await puppeteer.launch({headless: true});
     const page = await browser.newPage();
 
+    console.log("PHPSESSID: ", req.query.phpSessId)
+    console.log("TOKEN RELATORIO: ", req.query.tokenRelatorio)
+
+    const cookies = [{
+      'name': 'PHPSESSID',
+      'value': req.query.phpSessId
+    }];
+
+    await page.goto(`http://gama.controllab.com.br/`)
+
+    await page.evaluate(() => {
+        // localStorage.setItem("indicadores", `{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIxODgzOjYzNDAiLCJhdWQiOjEsImlhdCI6MTU3OTYzMTg1NSwiZXhwIjoxNTc5NjQyNjU1fQ.sWG2Ssrf7wr6nSw2jaMtst1o5mquy5FSCEvX4Oes2QM","idSegmento":1,"tokenExp":1579642655000,"perfilValid":false,"integracao":true,"userId":23226,"idPart":8012}`);
+        localStorage.setItem("indicadores", `${req.query.tokenRelatorio}`); 
+    });
+
+    await page.setCookie(...cookies)
+
     if(currentHost === 'gama')
-        await page.goto(`http://gama.controllab.com.br/cionline/?action=${req.query.action}&menuqc=${req.query.menuqc}&RelatorioPage=1&IndicadoresSelecionados=${req.query.indicadores}&periodoInicial=${req.query.periodoInicial}&periodoFinal=${req.query.periodoFinal}&relatorioPuppeteer=1`);
+        await page.goto(`http://gama.controllab.com.br/cionline/?action=${req.query.action}&menuqc=${req.query.menuqc}&RelatorioPage=1&IndicadoresSelecionados=${req.query.indicadores}&periodoInicial=${req.query.periodoInicial}&periodoFinal=${req.query.periodoFinal}&relatorioPuppeteer=1&tokenRelatorio=${req.query.tokenRelatorio}`);
     else
         await page.goto(`http://localhost:3000/?&RelatorioPage=1&IndicadoresSelecionados=${req.query.indicadores}&periodoInicial=${req.query.periodoInicial}&periodoFinal=${req.query.periodoFinal}&relatorioPuppeteer=1`);
     
