@@ -39,9 +39,10 @@ app.get("/gerarRelatorioIndicadores", async (req, res) => {
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
     const page = await browser.newPage();
+    var tokenRel = JSON.stringify(req.query.tokenRelatorio)
 
     console.log("PHPSESSID: ", req.query.phpSessId)
-    console.log("TOKEN RELATORIO: ", req.query.tokenRelatorio)
+    console.log("TOKEN RELATORIO: ", tokenRel)
 
     const cookies = [{
       'name': 'PHPSESSID',
@@ -50,10 +51,11 @@ app.get("/gerarRelatorioIndicadores", async (req, res) => {
 
     await page.goto(`http://gama.controllab.com.br/`)
 
-    await page.evaluate(() => {
+    await page.evaluate((tokenRel) => {
         // localStorage.setItem("indicadores", `{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIxODgzOjYzNDAiLCJhdWQiOjEsImlhdCI6MTU3OTYzMTg1NSwiZXhwIjoxNTc5NjQyNjU1fQ.sWG2Ssrf7wr6nSw2jaMtst1o5mquy5FSCEvX4Oes2QM","idSegmento":1,"tokenExp":1579642655000,"perfilValid":false,"integracao":true,"userId":23226,"idPart":8012}`);
-        localStorage.setItem("indicadores", `${req.query.tokenRelatorio}`); 
-    });
+        // localStorage.setItem("indicadores", `${req.query.tokenRelatorio}`); 
+        localStorage.setItem("indicadores", tokenRel);
+    }, tokenRel);
 
     await page.setCookie(...cookies)
 

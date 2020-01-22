@@ -41,13 +41,11 @@ app.get("/gerarRelatorioIndicadores", async (req, res) => {
         args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
     const page = await browser.newPage();
-    
-    // console.log("PHPSESSID: ", req.query.phpSessId)
-    // console.log("TOKEN RELATORIO: ", req.query.tokenRelatorio)
+    var tokenRel = JSON.stringify(req.query.tokenRelatorio)
 
-    console.log("PHPSESSID: ", "f1g6fhskphsvk5aec6fja9h373")
-    console.log("TOKEN RELATORIO: ", req.query.tokenRelatorio)
-    
+    console.log("PHPSESSID: ", req.query.phpSessId)
+    console.log("TOKEN RELATORIO: ", tokenRel)
+        
     const cookies = [{
       'name': 'PHPSESSID',
       'value': 'f1g6fhskphsvk5aec6fja9h373'
@@ -56,10 +54,11 @@ app.get("/gerarRelatorioIndicadores", async (req, res) => {
 
     await page.goto(`http://gama.controllab.com.br/`)
 
-    await page.evaluate(() => {
-        localStorage.setItem("indicadores", `{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIxODgzOjYzNDAiLCJhdWQiOjEsImlhdCI6MTU3OTcxNDQyMCwiZXhwIjoxNTc5NzI1MjIwfQ.F5j3f4FqxOjfavr6rvbvtEfecc9E7L3shUYkaU20AM0","idSegmento":1,"tokenExp":1579725220000,"perfilValid":false,"integracao":true,"userId":23226,"idPart":8012}`);
+    await page.evaluate((tokenRel) => {
+        // localStorage.setItem("indicadores", `{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIxODgzOjYzNDAiLCJhdWQiOjEsImlhdCI6MTU3OTcxNDQyMCwiZXhwIjoxNTc5NzI1MjIwfQ.F5j3f4FqxOjfavr6rvbvtEfecc9E7L3shUYkaU20AM0","idSegmento":1,"tokenExp":1579725220000,"perfilValid":false,"integracao":true,"userId":23226,"idPart":8012}`);
         // localStorage.setItem("indicadores", `${req.query.tokenRelatorio}`); 
-    });
+        localStorage.setItem("indicadores", tokenRel);
+    }, tokenRel);
 
     await page.setCookie(...cookies)
 
