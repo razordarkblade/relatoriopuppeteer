@@ -25,14 +25,19 @@ app.use(function (req, res, next) {
 
 app.get("/gerarRelatorioIndicadores", async (req, res) => {
     
-    var dataInicio = new Date().toLocaleDateString()
+    var dataInicio = new Date().toLocaleDateString('en-GB')
     var dataInicioArray = dataInicio.split('-')
     var horaInicio = new Date().toLocaleTimeString()
     var currentHost = req.query.currentHost
 
     console.log("======================================================================")
-    console.log(`Iniciou às: ${dataInicioArray[2]}/${dataInicioArray[1]}/${dataInicioArray[0]} - ${horaInicio}`);
-    const browser = await puppeteer.launch({headless: true});
+    console.log(`Iniciou às: ${dataInicio} - ${horaInicio}`);
+    const browser = await puppeteer.launch({
+        headless: true,
+        executablePath:'./node_modules/puppeteer/.local-chromium/linux-706915/chrome-linux/chrome',
+        ignoreDefaultArgs: ['--disable-extensions'], 
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
     const page = await browser.newPage();
 
     console.log("PHPSESSID: ", req.query.phpSessId)
@@ -87,16 +92,16 @@ app.get("/gerarRelatorioIndicadores", async (req, res) => {
     res.set({ 'Content-Type': 'application/pdf', 'Content-Length': pdfFile.length })
     res.send(pdfFile)
 
-    var dataFim = new Date().toLocaleDateString()
+    var dataFim = new Date().toLocaleDateString('en-GB')
     var dataFimArray = dataFim.split('-')
     var horaFim = new Date().toLocaleTimeString()
-    console.log(`Terminou às: ${dataFimArray[2]}/${dataFimArray[1]}/${dataFimArray[0]} - ${horaFim}`);
+    console.log(`Terminou às: ${dataFim} - ${horaFim}`);
     console.log("======================================================================")
 
     fs.unlinkSync(path)
 })
 
-var server = app.listen(4006, function () {
+var server = app.listen(4006, "localhost", function () {
     var host = server.address().address;
     var port = server.address().port;
     console.log('Listeneing at http://%s:%s', host, port);
