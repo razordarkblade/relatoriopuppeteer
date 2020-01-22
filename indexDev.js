@@ -32,22 +32,32 @@ app.get("/gerarRelatorioIndicadores", async (req, res) => {
     
     console.log("======================================================================")
     console.log(`Iniciou às: ${dataInicioArray[2]}/${dataInicioArray[1]}/${dataInicioArray[0]} - ${horaInicio}`);
-    const browser = await puppeteer.launch({headless: true});
+    const browser = await puppeteer.launch({
+        headless: true,
+        // executablePath:'./node_modules/puppeteer/.local-chromium/linux-599821/chrome-linux/chrome',
+        executablePath:'./node_modules/puppeteer/.local-chromium/win64-706915/chrome-win/chrome',
+        ignoreDefaultArgs: ['--disable-extensions'], 
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
     const page = await browser.newPage();
     
-    console.log("PHPSESSID: ", req.query.phpSessId)
-    console.log("TOKEN RELATORIO: ", req.query.tokenRelatorio)
+    // console.log("PHPSESSID: ", req.query.phpSessId)
+    // console.log("TOKEN RELATORIO: ", req.query.tokenRelatorio)
 
+    console.log("PHPSESSID: ", "f1g6fhskphsvk5aec6fja9h373")
+    console.log("TOKEN RELATORIO: ", req.query.tokenRelatorio)
+    
     const cookies = [{
       'name': 'PHPSESSID',
-      'value': req.query.phpSessId
+      'value': 'f1g6fhskphsvk5aec6fja9h373'
+    //   'value': req.query.phpSessId
     }];
 
     await page.goto(`http://gama.controllab.com.br/`)
 
     await page.evaluate(() => {
-        // localStorage.setItem("indicadores", `{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIxODgzOjYzNDAiLCJhdWQiOjEsImlhdCI6MTU3OTYzMTg1NSwiZXhwIjoxNTc5NjQyNjU1fQ.sWG2Ssrf7wr6nSw2jaMtst1o5mquy5FSCEvX4Oes2QM","idSegmento":1,"tokenExp":1579642655000,"perfilValid":false,"integracao":true,"userId":23226,"idPart":8012}`);
-        localStorage.setItem("indicadores", `${req.query.tokenRelatorio}`); 
+        localStorage.setItem("indicadores", `{"token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiIxODgzOjYzNDAiLCJhdWQiOjEsImlhdCI6MTU3OTcxNDQyMCwiZXhwIjoxNTc5NzI1MjIwfQ.F5j3f4FqxOjfavr6rvbvtEfecc9E7L3shUYkaU20AM0","idSegmento":1,"tokenExp":1579725220000,"perfilValid":false,"integracao":true,"userId":23226,"idPart":8012}`);
+        // localStorage.setItem("indicadores", `${req.query.tokenRelatorio}`); 
     });
 
     await page.setCookie(...cookies)
