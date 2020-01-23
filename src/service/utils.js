@@ -8,7 +8,7 @@ module.exports = {
         var horaInicio = new Date().toLocaleTimeString()
         var currentHost = req.query.currentHost
         
-        if(!req.query.indicadores || !req.query.periodoInicial || !req.query.periodoFinal || !req.query.currentHost || !req.query.relatorioPuppeteer) {
+        if(!req.query.indicadores || !req.query.periodoInicial || !req.query.periodoFinal || !req.query.currentHost ) {
             res.statusMessage = "Parâmetro(s) incorreto(s)";
             res.status(404).send({message: res.statusMessage})
             return

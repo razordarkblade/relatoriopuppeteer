@@ -11,7 +11,7 @@ routes.get("/", (req, res) => {
 
 routes.get("/gerarRelatorioIndicadores",  (req, res) => {
     
-     Utils.relatorioPuppeter(req,res)
+     Utils.relatorioIndicadores(req,res)
    
 })
 
