@@ -65,10 +65,6 @@ module.exports = {
         if(req.query.indicadores.indexOf(',') > -1)
             qtdIndicadores = req.query.indicadores.split(',').length
         
-        console.log("QUERY String: ", req.query.indicadores)
-        console.log("Total de Indicadores: ", qtdIndicadores)
-        console.log("Action: ", req.query.action)
-        console.log("MenuQC: ", req.query.menuqc)
     
         await page.waitFor(qtdIndicadores * 4000)
         await page.emulateMedia('screen')

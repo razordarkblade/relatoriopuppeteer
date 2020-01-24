@@ -10,14 +10,12 @@ routes.get("/", (req, res) => {
 
 
 routes.get("/gerarRelatorioIndicadores",  (req, res) => {
-    
-     Utils.relatorioIndicadores(req,res)
-   
-})
-
-
-routes.get("/jsonTest", (req, res) => {
-    Utils.retornarJson(req, res)
+    try{
+        Utils.relatorioIndicadores(req,res)
+    }
+    catch(error){
+        res.send({err: error})
+    }    
 })
 
 module.exports = routes;
