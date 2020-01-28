@@ -20,8 +20,11 @@ module.exports = {
         console.log(`Iniciou às: ${dataInicio} - ${horaInicio}`);
         let browser = null
         let tokenRel = null
+        let siteUrl = '' 
 
-        if(currentHost === 'gama'){
+        //http://gama.controllab.com.br/
+
+        if(currentHost !== 'localhost'){
             browser = await puppeteer.launch({
                 headless: true,
                 executablePath:'./node_modules/puppeteer/.local-chromium/linux-706915/chrome-linux/chrome',
@@ -30,8 +33,13 @@ module.exports = {
             });
 
             tokenRel = JSON.stringify(req.query.tokenRelatorio)
+
+            if(currentHost === 'prod')
+                siteUrl = 'https://controllab.com/'
+            else if (currentHost === 'gama')
+                siteUrl = 'http://gama.controllab.com.br/'
            
-            await page.goto(`http://gama.controllab.com.br/`)
+            await page.goto(siteUrl)
     
             await page.evaluate((tokenRel) => {
                 localStorage.setItem("indicadores", tokenRel);
@@ -43,7 +51,7 @@ module.exports = {
               }];
   
               await page.setCookie(...cookies)
-              await page.goto(`http://gama.controllab.com.br/cionline/?action=${req.query.action}&menuqc=${req.query.menuqc}&RelatorioPage=1&IndicadoresSelecionados=${req.query.indicadores}&periodoInicial=${req.query.periodoInicial}&periodoFinal=${req.query.periodoFinal}&relatorioPuppeteer=1`);
+              await page.goto(`${siteUrl}cionline/?action=${req.query.action}&menuqc=${req.query.menuqc}&RelatorioPage=1&IndicadoresSelecionados=${req.query.indicadores}&periodoInicial=${req.query.periodoInicial}&periodoFinal=${req.query.periodoFinal}&relatorioPuppeteer=1`);
         }
         else
             browser = await puppeteer.launch({headless: true});
