@@ -20,6 +20,7 @@ module.exports = {
         console.log(`Iniciou às: ${dataInicio} - ${horaInicio}`);
         let browser = null
         let tokenRel = null
+
         if(currentHost === 'gama'){
             browser = await puppeteer.launch({
                 headless: true,
@@ -29,8 +30,7 @@ module.exports = {
             });
 
             tokenRel = JSON.stringify(req.query.tokenRelatorio)
-            console.log("TOKEN RELATORIO: ", tokenRel)
-
+           
             await page.goto(`http://gama.controllab.com.br/`)
     
             await page.evaluate((tokenRel) => {
@@ -62,8 +62,11 @@ module.exports = {
         if(req.query.indicadores.indexOf(',') > -1)
             qtdIndicadores = req.query.indicadores.split(',').length
         
-    
-        await page.waitFor(qtdIndicadores * 4000)
+        if(qtdIndicadores === 1 )
+            await page.waitFor(10000)
+        else
+            await page.waitFor(qtdIndicadores * 4000)
+
         await page.emulateMedia('screen')
       
         const pdfFile = await page.pdf({
