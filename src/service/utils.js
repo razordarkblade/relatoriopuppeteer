@@ -25,7 +25,7 @@ module.exports = {
 
         if(currentHost !== 'localhost'){
             browser = await puppeteer.launch({
-                headless: false,
+                headless: true,
                 executablePath:'./node_modules/puppeteer/.local-chromium/linux-706915/chrome-linux/chrome',
                 ignoreDefaultArgs: ['--disable-extensions'], 
                 args: ['--no-sandbox', '--disable-setuid-sandbox']
