@@ -21,24 +21,24 @@ module.exports = {
         let browser = null
         let tokenRel = null
         let siteUrl = '' 
-
-        //http://gama.controllab.com.br/
+        let page
 
         if(currentHost !== 'localhost'){
             browser = await puppeteer.launch({
-                headless: true,
+                headless: false,
                 executablePath:'./node_modules/puppeteer/.local-chromium/linux-706915/chrome-linux/chrome',
                 ignoreDefaultArgs: ['--disable-extensions'], 
                 args: ['--no-sandbox', '--disable-setuid-sandbox']
             });
 
+            page = await browser.newPage();
             tokenRel = JSON.stringify(req.query.tokenRelatorio)
 
             if(currentHost === 'prod')
                 siteUrl = 'https://controllab.com/'
-            else if (currentHost === 'gama')
+            else
                 siteUrl = 'http://gama.controllab.com.br/'
-           
+
             await page.goto(siteUrl)
     
             await page.evaluate((tokenRel) => {
@@ -46,24 +46,24 @@ module.exports = {
             }, tokenRel);
 
             const cookies = [{
-                'name': 'PHPSESSID',
-                'value': req.query.phpSessId
-              }];
-  
-              await page.setCookie(...cookies)
-              await page.goto(`${siteUrl}cionline/?action=${req.query.action}&menuqc=${req.query.menuqc}&RelatorioPage=1&IndicadoresSelecionados=${req.query.indicadores}&periodoInicial=${req.query.periodoInicial}&periodoFinal=${req.query.periodoFinal}&relatorioPuppeteer=1`);
+                  'name': 'PHPSESSID',
+                  'value': req.query.phpSessId
+                },
+                {
+                    'name': 'SelLang',
+                    'value': req.query.selLang
+                }
+            ];
+            
+            await page.setCookie(...cookies)
+            await page.goto(`${siteUrl}cionline/?action=${req.query.action}&menuqc=${req.query.menuqc}&RelatorioPage=1&IndicadoresSelecionados=${req.query.indicadores}&periodoInicial=${req.query.periodoInicial}&periodoFinal=${req.query.periodoFinal}&relatorioPuppeteer=1`);
         }
-        else
+        else{
             browser = await puppeteer.launch({headless: true});
-
-        const page = await browser.newPage();
-        
-
-        if(currentHost === 'localhost'){
+            page = await browser.newPage();
             await page.goto(`http://localhost:3000/`)
             await page.goto(`http://localhost:3000/?&RelatorioPage=1&IndicadoresSelecionados=${req.query.indicadores}&periodoInicial=${req.query.periodoInicial}&periodoFinal=${req.query.periodoFinal}&relatorioPuppeteer=1`);
-        }
-            
+        }           
         
         var qtdIndicadores = 1
     
